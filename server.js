@@ -28,51 +28,33 @@ var users = [
 	}
 ];
 
-app.get('/', function(req, res) {
-	res.send('Hello API');
-});
+app.all('/', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+ });
 
 
-app.get('/users', function(req, res) {
-	res.send(users);
-});
-
-
-app.get('/users/:email', function(req, res) {
-	var result = users.find(function(user) {
-		return user.email === req.params.email
-	});
-	console.log('request');
-	if(result) {
-		var response = {
-			data:{
-				user:{
-					id: result.id,
-					email: result.email,
-					firstName: result.firstName,
-					lastName: result.secondName,
-				},
-				code: 200,
-				message: 'response 200'
-			}
-		}
-		res.send(response);
-	} else {
-		res.send(false);
-	}
-});
 
 app.post('/users', function(req, res) {
-	var user = {
-		id: Date.now(),
-		firstName: req.body.firstName,
-		secondName: req.body.secondName,
-		email: req.body.email
-	};
-	users.push(user);
-	res.send(user);
-	console.log('request');
+	res.send(users);
+
 });
+
+
+
+
+// app.post('/users', function(req, res) {
+// 	var user = {
+// 		id: Date.now(),
+// 		firstName: req.body.firstName,
+// 		secondName: req.body.secondName,
+// 		email: req.body.email
+// 	};
+// 	users.push(user);
+// 	res.send(user);
+// 	console.log('request');
+// });
 
 
 app.put('/users/:email', function(req, res) {
