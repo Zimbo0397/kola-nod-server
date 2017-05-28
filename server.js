@@ -11,18 +11,24 @@ var users = [
 	{
 		id: 1,
 		email: 'Zimbo222@mail.ru',
+		password: '1',
+		systemName: 'Zimbo',
 		firstName: 'Vitaly',
 		secondName: 'Zbrizsky'
 	},
 	{
 		id: 2,
 		email: '6870user@gmail.com',
+		password: 'ktyecbxrf1315689',
+		systemName: '6870user',
 		firstName: 'Ralf',
 		secondName: 'Loren'
 	},
 	{
 		id: 3,
 		email: 'Getsby@gmail.com',
+		password: 'ktyecbxrf1315689',
+		systemName: 'Getty',
 		firstName: 'Ebigail',
 		secondName: 'Getsby',
 	}
@@ -37,12 +43,69 @@ app.use(function(req, res, next) {
 
 
 app.post('/user/login', function(req, res) {
-	res.send(users);
-	console.log(req.body)
+	var result = new Error('Cant login');
+	var user = users.find(function(user) {
+		if (user.email === req.body.email && user.password === req.body.password) {
 
+			var userInfo = {};
+				userInfo.firstName = user.firstName;
+				userInfo.secondName = user.secondName;
+				userInfo.systemName = user.systemName;
+
+			result = userInfo;
+			res.json(result);
+		} else {
+			res.json(result);
+		}
+	});
+	console.log(JSON.stringify(result));
 });
 
+app.post('/user/registration', function(req, res) {
+	var result;
 
+
+	var checkUsers = function(req) {
+		for(var i = 0; i < users.length; i++) {
+			var user = users[i];
+
+			if (user.email === req.body.email) {
+				return "emailError";
+
+			} else if (user.systemName === req.body.systemName) {
+					return "systemNameError";
+			} else {
+				return 'OK'
+			}
+		}
+	}
+
+	switch(checkUsers(req)) {
+		case 'emailError':
+			result = 'emailError';
+		break
+
+		case 'systemNameError':
+			result = 'systemNameError';
+		break
+		case 'OK':
+			var newUser = {
+				id: Date.now(),
+				email: req.body.email,
+				firstName: req.body.firstName,
+				lastName: req.body.lastName,
+				systemName: req.body.systemName,
+				password: req.body.password
+			}
+			users.push(newUser);
+			result =  true;
+		break
+
+	}
+	console.log(users);
+	res.send(result);
+	// console.log(result);
+})
 
 
 // app.post('/users', function(req, res) {
